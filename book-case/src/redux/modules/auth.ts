@@ -1,6 +1,6 @@
 import { createActions, handleActions } from "redux-actions";
 
-export interface AuthState { //export 제거하면 나는 오류 확인 및 블로깅
+interface AuthState { //export 제거하면 나는 오류 확인 및 블로깅
     token : string | null;
     loading: boolean;
     error: Error | null;
@@ -35,5 +35,10 @@ const reducer = handleActions<AuthState, string>({
     })
 },initialState, {prefix});
 
+
+//saga
+export function* authSaga(){
+    
+}
 
 export default reducer;
