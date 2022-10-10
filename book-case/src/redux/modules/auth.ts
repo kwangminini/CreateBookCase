@@ -1,10 +1,11 @@
+import { LoginReqType, AuthState } from './../../types';
+import { Action } from "redux";
 import { createActions, handleActions } from "redux-actions";
+import { call, put, select, takeEvery } from "redux-saga/effects";
+import UserService from '../../services/UserService';
+import TokenService from '../../services/TokenService';
+import history from "../../history";
 
-interface AuthState { //export 제거하면 나는 오류 확인 및 블로깅
-    token : string | null;
-    loading: boolean;
-    error: Error | null;
-}
 
 
 const initialState:AuthState = {
@@ -36,9 +37,35 @@ const reducer = handleActions<AuthState, string>({
 },initialState, {prefix});
 
 
+
 //saga
+export const {login, logout} = createActions("LOGIN","LOGOUT",{prefix});
+
+function* loginSaga(action:Action<LoginReqType>){
+    try{
+        yield put(pending());
+        const token:string = yield call(UserService.login, action.type);
+        TokenService.set(token);
+        yield put(success(token));
+        history.push("/");
+    }catch(error:any){
+        yield put(fail(new Error(error?.response?.data?.error || "UNKOWN_ERROR")));
+    }
+}
+function* logoutSaga(){
+    try{
+        yield put(pending());
+        const token:string = yield select(state => state.auth.token);
+        yield call(UserService.logout, token);
+    }catch(error:any){
+    }finally{
+        TokenService.remove();
+        yield put(success(null));
+    }
+}
 export function* authSaga(){
-    
+    yield takeEvery(`${prefix}/LOGIN`, loginSaga);
+    yield takeEvery(`${prefix}/LOGOUT`, logoutSaga);
 }
 
 export default reducer;
