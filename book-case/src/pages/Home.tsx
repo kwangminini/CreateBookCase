@@ -1,26 +1,18 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../redux/modules/auth';
+import ListContainer from '../containers/ListContainer';
 import { RootState } from '../types';
 
 export default function Home() {
-    const dispatch = useDispatch();
     const token = useSelector<RootState, string|null>((state)=> state.auth.token); 
     const navigate = useNavigate();
 
     if(token === null){
-        return navigate("/signin");
+        navigate("/signin");
     }
     return (
-        <div>
-            <h1>Home</h1>
-            <button onClick={click}>logout</button>
-        </div>
+        <ListContainer/>
     )
 
-    function click(){
-        dispatch(logout());
-    }
 }

@@ -10,7 +10,7 @@ export default function Signin() {
     const navigate = useNavigate();
 
     if(token !== null){
-        return navigate("/");
+        navigate("/");
     }
     return (
         <SigninContainer/>

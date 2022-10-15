@@ -41,10 +41,11 @@ const reducer = handleActions<AuthState, string>({
 //saga
 export const {login, logout} = createActions("LOGIN","LOGOUT",{prefix});
 
-function* loginSaga(action:Action<LoginReqType>){
+function* loginSaga(action:any){
     try{
+        console.log("action ### ", action);
         yield put(pending());
-        const token:string = yield call(UserService.login, action.type);
+        const token:string = yield call(UserService.login, action.payload);
         TokenService.set(token);
         yield put(success(token));
         history.push("/");
